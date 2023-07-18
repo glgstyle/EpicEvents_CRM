@@ -36,5 +36,26 @@ EpicEvents_CRM est un logiciel de gestion de la relation client (CRM) sécurisé
     ```pip install -r requirements.txt```  
     ```pip freeze``` (pour vérifier que les packages se sont bien installés)
 
+6. Démarrer le serveur :
+
+    ```python manage.py runserver```
+
+
 # Utilisation
 
+    Pour plus d'informations concernant les requêtes de l'API veuillez consulter la documentation ci dessous :
+    https://documenter.getpostman.com/view/23089101/2s8YzXterj
+
+# Technologies
+    - Python v3.x+
+    - Django Rest 
+    - Postman
+    - PostgreSQL
+
+# Contribuer au project
+
+    Soft Desk n'est pas un projet open source. Veuillez nous contacter pour contribuer avec vos propres fonctionnalités.
+
+# Auteur
+
+    Gwénaëlle
