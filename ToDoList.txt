@@ -10,7 +10,7 @@ ToDoList
     -Authentication page 
     -Permitted users can connect to Django admin
 
-*Feature 3 : Django models for every business domain 
+*Feature 3 : Django models for every business domain (sans permission)
     -Customer
     -Contract status
     -Contract
