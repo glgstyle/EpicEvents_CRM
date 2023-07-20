@@ -36,15 +36,54 @@ EpicEvents_CRM est un logiciel de gestion de la relation client (CRM) sécurisé
     ```pip install -r requirements.txt```  
     ```pip freeze``` (pour vérifier que les packages se sont bien installés)
 
-6. Démarrer le serveur :
+6. Se placer dans le répertoire epic_crm:
 
-    ```python manage.py runserver```
-
+    ```cd epic_crm```
 
 # Utilisation
 
     Pour plus d'informations concernant les requêtes de l'API veuillez consulter la documentation ci dessous :
     https://documenter.getpostman.com/view/23089101/2s8YzXterj
+
+- Pour utiliser le site:
+
+1. Démarrer le serveur avec la commande suivante:
+
+    ```python manage.py runserver```  
+
+2. Rendez vous à l'adresse suivante dans votre navigateur internet:
+
+    http://127.0.0.1:8000/  
+
+
+- Pour gérer l'interface d'aministration:
+
+1. Créer un super user avec la commande suivante:
+
+    ```python manage.py createsuperuser```
+
+2. Saisir le nom d’utilisateur souhaité et appuyez sur entrée exemple:
+
+    ```Username: admin```
+
+3. Saisir l’adresse mail souhaitée exemple:
+
+    ```Email address: admin@example.com```
+
+4. L’étape finale est de saisir le mot de passe. On vous demande de le saisir deux fois, la seconde fois étant une confirmation de la première:
+
+    ```Password: **********```
+
+    ```Password (again): *********```
+    
+    ```Superuser created successfully.```
+
+5. À présent, ouvrez un navigateur Web et allez à l’URL « /admin/ » de votre domaine local – par exemple, http://127.0.0.1:8000/admin/.
+   Vous devriez voir l’écran de connexion à l’interface d’administration.
+
+Pour générer un rapport concernant la PEP8 avec Flake8:
+
+```flake8 --format=html --htmldir=flake-report```
 
 # Technologies
     - Python v3.x+

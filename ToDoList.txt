@@ -24,7 +24,7 @@ ToDoList
     *satisfaction condition :
         -Permission configuration must be organised in 2 groups that have the following access privileges and to which users can be associated:
             *Sales team group :
-                -Create prospects/customers 
+                -Create prospects/customers
                 -Convert prospects to clients
                 -Display and Update customers (assigned to them)
                 -Create a contract for a potential new event
@@ -72,4 +72,5 @@ ToDoList
 -Change and delete clients
 -Implement solution for teams
 -Implement a payment solution / Monthly recurring payments
+-Flake8, Tests, Security
 -Deploy

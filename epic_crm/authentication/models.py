@@ -1,4 +1,5 @@
-from django.contrib.auth.models import BaseUserManager,AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import (
+    BaseUserManager, AbstractBaseUser, PermissionsMixin)
 from django.db import models
 
 
@@ -23,7 +24,8 @@ class MyUserManager(BaseUserManager):
 
     def create_superuser(self, email, first_name, password=None):
         """
-        Creates and saves a superuser with the given email, firstname and password.
+        Creates and saves a superuser with the given email,
+        firstname and password.
         """
         user = self.create_user(
             self.normalize_email(email),
@@ -34,6 +36,7 @@ class MyUserManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
         return user
+
 
 class Staff(AbstractBaseUser, PermissionsMixin):
     TYPE_CHOICES = (
@@ -48,12 +51,12 @@ class Staff(AbstractBaseUser, PermissionsMixin):
         verbose_name="email address",
         max_length=100,
         unique=True)
-    role = models.CharField(max_length=25,choices=TYPE_CHOICES)
-    phone = models.CharField(max_length=20,null=True)
+    role = models.CharField(max_length=25, choices=TYPE_CHOICES)
+    phone = models.CharField(max_length=20, null=True)
     mobile = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True,null=True)
-    picture_url = models.CharField(max_length=255,null=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True)
+    picture_url = models.CharField(max_length=255, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
