@@ -4,5 +4,9 @@
 /.venv
 *.pyc
 __pycache__
+.pytest_cache
 db.sqlite3
 .vscode
+flake-report/
+.coverage
+.coveragerc
