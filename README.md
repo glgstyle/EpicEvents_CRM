@@ -81,7 +81,22 @@ EpicEvents_CRM est un logiciel de gestion de la relation client (CRM) sécurisé
 5. À présent, ouvrez un navigateur Web et allez à l’URL « /admin/ » de votre domaine local – par exemple, http://127.0.0.1:8000/admin/.
    Vous devriez voir l’écran de connexion à l’interface d’administration.
 
-Pour générer un rapport concernant la PEP8 avec Flake8:
+
+# Tests
+
+Pour tester le code un répertoire de tests à été crée contenant des tests unitaires, de performance et d'intégration. Nous avons utitlisé pytest. 
+
+Pour lancer les tests tapper la commande suivante (pytest + le nom du répertoire): 
+
+````pytest -s tests``
+
+Pour mesurer le pourcentage de couverture des tests sur le project:
+
+```pytest --cov=.```
+
+# Conventions
+
+Afin de respecter les conventions de code nommée PEP8 nous avons utilisé Flake8. Pour générer un rapport avec Flake8 tapper la commande suivante:
 
 ```flake8 --format=html --htmldir=flake-report```
 
