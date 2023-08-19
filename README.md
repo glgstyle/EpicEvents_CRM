@@ -94,6 +94,10 @@ Pour mesurer le pourcentage de couverture des tests sur le project:
 
 ```pytest --cov=.```
 
+Pour générer un rapport html des tests :
+
+```coverage html --skip-covered```
+
 # Conventions
 
 Afin de respecter les conventions de code nommée PEP8 nous avons utilisé Flake8. Pour générer un rapport avec Flake8 tapper la commande suivante:

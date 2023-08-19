@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-# from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
@@ -19,7 +19,10 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = Staff
-        fields = ["email", "first_name"]
+        fields = [
+            "email", "first_name", "last_name",
+            "phone", "mobile", "picture_url",
+            "role", "is_active"]  # ajouter les champs du staff
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -65,8 +68,10 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ["is_admin"]
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
-        ("Personal info", {"fields": ["first_name"]}),
-        ("Permissions", {"fields": ["is_admin"]}),
+        ("Personal info",
+         {"fields": ["first_name", "last_name",
+                     "phone", "mobile", "picture_url"]}),
+        ("Permissions", {"fields": ["is_admin", "role"]}),
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -75,7 +80,10 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["email", "first_name", "password1", "password2"],
+                "fields": [
+                    "email", "first_name", "last_name",
+                    "phone", "mobile", "picture_url",
+                    "password1", "password2", "role", "is_active"],
             },
         ),
     ]
@@ -88,4 +96,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(Staff, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
-# admin.site.unregister(Group)
+admin.site.unregister(Group)

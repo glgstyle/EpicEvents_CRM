@@ -1,21 +1,27 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
+from authentication.models import Staff
 
 
 class Prospect(models.Model):
+    '''A class to represent a prospect.'''
     sales_staff = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
+        limit_choices_to=(Q(role=Staff.Roles.SALES) |
+                          Q(role=Staff.Roles.MANAGEMENT)),
         on_delete=models.SET_NULL,
         null=True)
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     email = models.EmailField(max_length=100, unique=True)
-    phone = models.CharField(max_length=20, null=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     mobile = models.CharField(max_length=20)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True, null=True)
-    picture_url = models.CharField(max_length=255, null=True)
+    picture_url = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_converted = models.BooleanField(default=False)
     company_name = models.CharField(max_length=100)
 
     # return the firstname and lastname instead of prospect.object
@@ -28,20 +34,29 @@ class Prospect(models.Model):
 
 
 class Customer(models.Model):
+    '''A class to represent a customer.'''
+    first_name = models.CharField(max_length=25)
+    last_name = models.CharField(max_length=25)
+    email = models.EmailField(max_length=100, unique=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    mobile = models.CharField(max_length=20)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True, null=True)
+    picture_url = models.CharField(max_length=255, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    company_name = models.CharField(max_length=100)
     prospect = models.OneToOneField(
         Prospect,
         on_delete=models.SET_NULL,
         null=True)
     sales_staff = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
+        # display only sales staff and manager not support
+        limit_choices_to=(Q(role=Staff.Roles.SALES) |
+                          Q(role=Staff.Roles.MANAGEMENT)),
         on_delete=models.SET_NULL,
         null=True,
         related_name='sales')
-    management_staff = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='managers')
 
     # return the firstname and lastname instead of customer.object
     def __str__(self):
@@ -53,10 +68,13 @@ class Customer(models.Model):
 
 
 class Contract(models.Model):
+    '''A class to represent a contract.'''
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE)
     sales_staff = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
+        limit_choices_to=(Q(role=Staff.Roles.SALES) |
+                          Q(role=Staff.Roles.MANAGEMENT)),
         on_delete=models.SET_NULL,
         null=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -76,16 +94,14 @@ class Contract(models.Model):
 
 
 class EventStatus(models.Model):
-    STATUS_CHOICES = (
-        # first is displayed and second in database
-        ('A venir', 'upcoming'),
-        ('En cours', 'processing'),
-        ('Terminé', 'done'),
-        ('Annulé', 'cancelled'),
-    )
+    '''A class to represent an event status.'''
     status = models.CharField(
-        max_length=25, choices=STATUS_CHOICES, default=STATUS_CHOICES[0])
+        max_length=25)
     description = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        verbose_name = "Event status"
+        verbose_name_plural = "Events status"
 
     # return the id and status instead of eventStatus.object
     def __str__(self):
@@ -97,21 +113,15 @@ class EventStatus(models.Model):
 
 
 class Event(models.Model):
-    customer = models.ForeignKey(
-        Customer,
-        on_delete=models.CASCADE)
+    '''A class to represent an event.'''
     support_staff = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
+        limit_choices_to={'role': Staff.Roles.SUPPORT},
         on_delete=models.SET_NULL,
-        null=True,
+        blank=True, null=True,
         related_name='support_contact')
-    management_staff = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='event_managers')
     contract = models.ForeignKey(
-        Contract,
+        Contract, limit_choices_to={'status': True},
         on_delete=models.CASCADE)
     event_status = models.ForeignKey(
         EventStatus,
@@ -124,7 +134,7 @@ class Event(models.Model):
     attendees = models.IntegerField()
     event_date_start = models.DateTimeField()
     event_date_end = models.DateTimeField()
-    notes = models.TextField(null=True)
+    notes = models.TextField(blank=True, null=True)
 
     # return the name and date instead of event.object
     def __str__(self):

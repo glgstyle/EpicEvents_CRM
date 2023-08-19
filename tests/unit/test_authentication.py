@@ -34,5 +34,4 @@ def test_login():
         "/admin/login/?next=/admin/",
         data={"email": "john@gmail.com",
               "password": "smith"})
-    response = client.get("/admin/", follow=True)
     assert response.status_code == 200

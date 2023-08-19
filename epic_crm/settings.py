@@ -53,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'language.DefaultLanguageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
 ]
 
@@ -129,7 +128,7 @@ PASSWORD_HASHERS = [
 
 LANGUAGE_CODE = 'fr-fr'  # default language
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
