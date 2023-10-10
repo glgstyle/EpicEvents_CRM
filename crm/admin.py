@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib import messages
 from .admin_permissions import (
     ProspectPermission, CustomerPermission,
     ContractPermission, EventStatusPermission, EventPermission)
@@ -33,7 +34,7 @@ class ProspectAdmin(ProspectPermission, admin.ModelAdmin):
 
     @admin.action(description='Convertir en client')
     def convert_to_customer(self, request, queryset):
-        print("queryset", queryset)
+        # print("queryset", queryset)
         # check if lead exists in customer
         for lead in queryset:
             customer = Customer.objects.filter(prospect=lead).exists()
@@ -103,43 +104,46 @@ class EventStatusAdmin(EventStatusPermission, admin.ModelAdmin):
 # event
 @admin.register(Event)
 class EventAdmin(EventPermission, admin.ModelAdmin):
-
+    list_filter = ["support_staff"]
     list_display = [
         'support_staff',
         'contract',
         'event_status',
-        'date_created',
-        'date_updated',
+        # 'date_created',
+        # 'date_updated',
         'name',
         'address',
         'attendees',
         'event_date_start',
         'event_date_end',
-        'notes']
+        # 'notes'
+        ]
 
     form = EventAdminForm
 
     # save model with datas from form(save_model call clean method
     # with validation condition in forms.py)
     def save_model(self, request, obj, form, change):
-        form_support_staff = form.cleaned_data.get('support_staff')
-        form_contract = form.cleaned_data.get('contract')
-        form_event_status = form.cleaned_data.get('event_status')
-        form_name = form.cleaned_data.get('name')
-        form_address = form.cleaned_data.get('address')
-        form_attendees = form.cleaned_data.get('attendees')
-        form_event_date_start = form.cleaned_data.get('event_date_start')
-        form_event_date_end = form.cleaned_data.get('event_date_end')
-        form_notes = form.cleaned_data.get('notes')
-        obj = Event(
-            support_staff=form_support_staff,
-            contract=form_contract,
-            event_status=form_event_status,
-            name=form_name,
-            address=form_address,
-            attendees=form_attendees,
-            event_date_start=form_event_date_start,
-            event_date_end=form_event_date_end,
-            notes=form_notes)
-
-        obj.save()
+        
+        obj.support_staff = form.cleaned_data.get('support_staff')
+        obj.event_status = form.cleaned_data.get('event_status')
+        obj.name = form.cleaned_data.get('name')
+        obj.address = form.cleaned_data.get('address')
+        obj.attendees = form.cleaned_data.get('attendees')
+        obj.event_date_start = form.cleaned_data.get('event_date_start')
+        obj.event_date_end = form.cleaned_data.get('event_date_end')
+        obj.notes = form.cleaned_data.get('notes')
+        obj.contract=form.cleaned_data.get('contract')
+        if change:
+            # print(" ++++++++++++++print form ", form.cleaned_data.get('contract'))
+            existing_event = Event.objects.filter(contract=form.cleaned_data.get('contract')).first()
+            # is_past = obj.is_past()
+            if existing_event is not None and existing_event.id != obj.id:
+                messages.error(request,
+                    'Il y a déjà un événement avec ce contrat. '
+                    'Veuillez signer un autre contrat pour '
+                    'créer un nouvel événement')
+            else:
+                obj.save()
+        else:
+            obj.save()

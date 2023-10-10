@@ -76,7 +76,7 @@ class Staff(AbstractBaseUser, PermissionsMixin):
         return self.__str__()
 
     def has_perm(self, perm, obj=None):
-        print('perm', perm, 'object', obj)
+        # print('perm', perm, 'object', obj)
         if (perm == 'authentication.add_staff' or
                 perm == 'authentication.change_staff' or
                 perm == 'authentication.delete_staff'):
@@ -84,7 +84,7 @@ class Staff(AbstractBaseUser, PermissionsMixin):
         return True
 
     def has_module_perms(self, app_label):
-        print('app module', app_label)
+        # print('app module', app_label)
         # access to staff forbidden if not admin
         if app_label == 'authentication':
             if self.is_admin:

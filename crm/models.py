@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from authentication.models import Staff
-
+from datetime import datetime
+import pytz
 
 class Prospect(models.Model):
     '''A class to represent a prospect.'''
@@ -143,3 +144,9 @@ class Event(models.Model):
     # return the event if he's in a list
     def __repr__(self):
         return self.__str__()
+
+    def is_past(self):
+        france = pytz.timezone("Europe/Paris")
+        local_time = datetime.now()
+        time_now = france.localize(local_time)
+        return time_now > self.event_date_end
