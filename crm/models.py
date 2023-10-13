@@ -150,3 +150,8 @@ class Event(models.Model):
         local_time = datetime.now()
         time_now = france.localize(local_time)
         return time_now > self.event_date_end
+    
+    def sales_staff(self):
+        sales_staff = self.contract.sales_staff.id
+        print("*********************************sales_staff", sales_staff)
+        return sales_staff

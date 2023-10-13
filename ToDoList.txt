@@ -16,13 +16,15 @@ ToDoList
     -Contract
     -Event
 
-*Feature 4 : Non admin users can be associated with one of two groups determining permissions for the API
+*Feature 4 : Non admin users can be associated with one of two groups 
+             determining permissions for the API
     -Management team users will be Django admin "staff" users:      
         -create staff user and give permissions
         -CRUD on users
         -Read and update all CRM datas(contracts, events...)
     *satisfaction condition :
-        -Permission configuration must be organised in 2 groups that have the following access privileges and to which users can be associated:
+        -Permission configuration must be organised in 2 groups that have the 
+         following access privileges and to which users can be associated:
             *Sales team group :
                 -Create prospects/customers
                 -Convert prospects to clients
@@ -34,7 +36,7 @@ ToDoList
                 -Display and update events (assigned to them)
                 -Display customers (for customers of events assigned to them)
 
-*Feature 5 : There is an API supporting CRUD operations based on database models
+*Feature 5 : There is an API supporting CRUD operations based on db models
     -Install Django Rest framework and use it for views 
     -Use Django ORM to interact with database models
     *Create API endpoints for the following model:
@@ -42,11 +44,14 @@ ToDoList
         -Contracts
         -Events
     *Secure the API (see doc) :
-        -Always check user permissions are sufficient to access the requested view or data
-        -Check that the HTTP method used in the request is appropriate/authorized.
+        -Always check user permissions are sufficient to access the requested 
+         view or data
+        -Check that the HTTP method used in the request is 
+         appropriate/authorized.
 
 *Feature 6 : API endpoints should allow users to search and filter informations 
-    -When they have permission to access to the datas, users can search and filter informations with the Api endpoints
+    -When they have permission to access to the datas, users can search and 
+     filter informations with the Api endpoints
     -Use Django ORM tointeract to the database models
     *Customer API endpoints allow users to search:
         -Customer name
