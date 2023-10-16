@@ -47,21 +47,21 @@ class ContractViewset(ModelViewSet):
     def perform_create(self, serializer):
         # save the request.user as author when creating the contract
         serializer.save(sales_staff=self.request.user)
-    
+
 
 class EventViewset(ModelViewSet):
     """View for Event object. """
 
-    permission_classes = [IsAuthenticated & IsSellerOrReadOnly 
+    permission_classes = [IsAuthenticated & IsSellerOrReadOnly
                           | IsAuthenticated & IsCustomerAssigned
-                          | IsAuthenticated & IsManager 
+                          | IsAuthenticated & IsManager
                           | IsAuthenticated & IsSupport]
     serializer_class = EventSerializer
 
     def get_queryset(self):
         """Define the Query String usable in url."""
         queryset = Event.objects.filter(
-            contract=self.kwargs['contract__pk'])        
+            contract=self.kwargs['contract__pk'])
         return queryset
 
     def perform_create(self, serializer):

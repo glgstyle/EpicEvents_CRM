@@ -1,4 +1,3 @@
-from django.urls import include, path
 """
 URL configuration for epic_crm project.
 
@@ -16,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from rest_framework_nested import routers
 from crm.views import CustomerViewset, ContractViewset, EventViewset
 
@@ -42,5 +41,5 @@ urlpatterns = [
     path(r'api/', include(router.urls)),
     path(r'api/', include(contracts_router.urls)),
     path(r'api/', include(events_router.urls)),
-    
+
 ]

@@ -36,19 +36,19 @@ class EventSerializer(ModelSerializer):
     def validate(self, data):
         """
         Check if event already exists with this contract
-        by getting contract id from view and raise error 
+        by getting contract id from view and raise error
         if true.
         """
         event_exists = Event.objects.filter(
             contract=self.context['view'].kwargs['contract__pk']).exists()
         # raise error if event exists in db but not if we want tu update
-        if (event_exists and not self.context['request'].method == 'PUT' and 
-        not self.context['request'].method == 'PATCH'):
+        if (event_exists and not self.context['request'].method == 'PUT' and
+                not self.context['request'].method == 'PATCH'):
             raise serializers.ValidationError(
                 "Ce contrat a déjà un événement associé, "
                 "veuillez créer un autre contrat.")
         return data
-    
+
     class Meta:
         model = Event
         fields = ['id', 'customer_object', 'support_staff', 'event_status',

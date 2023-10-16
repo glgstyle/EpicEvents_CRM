@@ -5,6 +5,7 @@ from authentication.models import Staff
 from datetime import datetime
 import pytz
 
+
 class Prospect(models.Model):
     '''A class to represent a prospect.'''
     sales_staff = models.ForeignKey(
@@ -150,7 +151,7 @@ class Event(models.Model):
         local_time = datetime.now()
         time_now = france.localize(local_time)
         return time_now > self.event_date_end
-    
+
     def sales_staff(self):
         sales_staff = self.contract.sales_staff.id
         print("*********************************sales_staff", sales_staff)

@@ -124,7 +124,7 @@ class EventAdmin(EventPermission, admin.ModelAdmin):
     # save model with datas from form(save_model call clean method
     # with validation condition in forms.py)
     def save_model(self, request, obj, form, change):
-        
+
         obj.support_staff = form.cleaned_data.get('support_staff')
         obj.event_status = form.cleaned_data.get('event_status')
         obj.name = form.cleaned_data.get('name')
@@ -133,16 +133,15 @@ class EventAdmin(EventPermission, admin.ModelAdmin):
         obj.event_date_start = form.cleaned_data.get('event_date_start')
         obj.event_date_end = form.cleaned_data.get('event_date_end')
         obj.notes = form.cleaned_data.get('notes')
-        obj.contract=form.cleaned_data.get('contract')
+        obj.contract = form.cleaned_data.get('contract')
         if change:
-            # print(" ++++++++++++++print form ", form.cleaned_data.get('contract'))
-            existing_event = Event.objects.filter(contract=form.cleaned_data.get('contract')).first()
-            # is_past = obj.is_past()
+            existing_event = Event.objects.filter(
+                contract=form.cleaned_data.get('contract')).first()
             if existing_event is not None and existing_event.id != obj.id:
                 messages.error(request,
-                    'Il y a déjà un événement avec ce contrat. '
-                    'Veuillez signer un autre contrat pour '
-                    'créer un nouvel événement')
+                               'Il y a déjà un événement avec ce contrat. '
+                               'Veuillez signer un autre contrat pour '
+                               'créer un nouvel événement')
             else:
                 obj.save()
         else:
