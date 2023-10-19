@@ -52,7 +52,7 @@ ToDoList
 *Feature 6 : API endpoints should allow users to search and filter informations 
     -When they have permission to access to the datas, users can search and 
      filter informations with the Api endpoints
-    -Use Django ORM tointeract to the database models
+    -Use Django ORM to interact to the database models
     *Customer API endpoints allow users to search:
         -Customer name
         -Customer email

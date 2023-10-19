@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework_nested import routers
-from crm.views import CustomerViewset, ContractViewset, EventViewset
+from crm.views import (CustomerViewset, CustomerContractViewset,
+                       EventContractViewset, ContractList, EventList)
 
 # Customer
 router = routers.SimpleRouter()
@@ -27,19 +28,32 @@ router.register(r'customers', CustomerViewset, basename='customer')
 contracts_router = routers.NestedSimpleRouter(
     router, r'customers', lookup='customer')
 contracts_router.register(
-    r'contracts', ContractViewset, basename='customer-contracts')
+    r'contracts', CustomerContractViewset, basename='customer-contracts')
+
+# Contracts List
+contracts_list_router = routers.SimpleRouter()
+contracts_list_router.register(r'contracts', ContractList,
+                               basename='contracts')
 
 # Events
 events_router = routers.NestedSimpleRouter(
     contracts_router, 'contracts', lookup='contract')
 events_router.register(
-    'events', EventViewset, basename='customer-contracts-events')
+    'events', EventContractViewset, basename='customer-contracts-events')
+
+# Events List
+events_list_router = routers.SimpleRouter()
+events_list_router.register(r'events', EventList,
+                            basename='events')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r"api/", include("authentication.urls")),
     path(r'api/', include(router.urls)),
+    path(r'api/', include(contracts_list_router.urls)),
     path(r'api/', include(contracts_router.urls)),
     path(r'api/', include(events_router.urls)),
+    path(r'api/', include(events_list_router.urls)),
+
 
 ]

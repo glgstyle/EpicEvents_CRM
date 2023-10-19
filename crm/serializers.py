@@ -7,7 +7,7 @@ from crm.models import Customer, Contract, Event
 class CustomerSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Customer
-        fields = ['id', 'first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
     def validate_title(self, value):
         # check if customer exists
@@ -53,5 +53,6 @@ class EventSerializer(ModelSerializer):
         model = Event
         fields = ['id', 'customer_object', 'support_staff', 'event_status',
                   'date_created', 'date_updated', 'name', 'address',
-                  'attendees', 'event_date_start', 'event_date_end', 'notes']
+                  'attendees', 'event_date_start', 'event_date_end', 'notes',
+                  'contract_id']
         read_only_fields = ['support_staff', 'contract']
