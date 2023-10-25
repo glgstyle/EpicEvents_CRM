@@ -1,8 +1,10 @@
 from crm.models import Customer, Contract, Event
 from crm.serializers import (CustomerSerializer, ContractSerializer,
                              EventSerializer)
-from crm.permissions import (IsSellerOrReadOnly, IsCustomerAssigned, IsManager,
-                             IsSupport)
+# from crm.permissions import (IsSellerOrReadOnly, IsCustomerAssigned, IsManager,
+#                              IsSupport)
+from crm.permissions import (
+    HasCustomerPermission, HasContractPermission, HasEventPermission)
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from django.http import Http404
@@ -14,7 +16,7 @@ from rest_framework.response import Response
 class CustomerViewset(ModelViewSet):
     """View for Customer object. """
 
-    permission_classes = [IsAuthenticated & IsSellerOrReadOnly]
+    permission_classes = [IsAuthenticated & HasCustomerPermission]
     serializer_class = CustomerSerializer
 
     def get_queryset(self):
@@ -26,9 +28,10 @@ class CustomerViewset(ModelViewSet):
         if customer is not None:
             queryset = queryset.filter(id=customer)
         elif last_name is not None:
-            queryset = queryset.filter(last_name=last_name)
+            # case insensitive (__icontains)
+            queryset = queryset.filter(last_name__icontains=last_name)
         elif email is not None:
-            queryset = queryset.filter(email=email)
+            queryset = queryset.filter(email__icontains=email)
         return queryset
 
     def perform_create(self, serializer):
@@ -39,9 +42,7 @@ class CustomerViewset(ModelViewSet):
 # Contract
 class ContractList(ReadOnlyModelViewSet):
 
-    permission_classes = [IsAuthenticated & IsSellerOrReadOnly
-                          | IsAuthenticated & IsCustomerAssigned
-                          | IsAuthenticated & IsManager]
+    permission_classes = [IsAuthenticated & HasContractPermission]
     serializer_class = ContractSerializer
 
     def get_queryset(self):
@@ -56,19 +57,19 @@ class ContractList(ReadOnlyModelViewSet):
         amount = self.request.query_params.get('amount')
         contract_status = self.request.query_params.get('status')
         payment_due = self.request.query_params.get('payment_due')
-        # except Exception as ex:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if last_name is not None:
-            queryset = queryset.filter(customer__last_name=last_name)
+            queryset = queryset.filter(
+                # case insensitive (__icontains)
+                customer__last_name__icontains=last_name)
         elif email is not None:
-            queryset = queryset.filter(customer__email=email)
+            queryset = queryset.filter(customer__email__icontains=email)
         elif date_created is not None:
             queryset = queryset.filter(date_created__date=date_created)
         elif amount is not None:
             queryset = queryset.filter(amount=amount)
         elif contract_status is not None:
-            queryset = queryset.filter(status=contract_status)
+            queryset = queryset.filter(status__icontains=contract_status)
         elif payment_due is not None:
             queryset = queryset.filter(payment_due=payment_due)
         return queryset
@@ -77,9 +78,7 @@ class ContractList(ReadOnlyModelViewSet):
 class CustomerContractViewset(ModelViewSet):
     """View for Customer Contract. """
 
-    permission_classes = [IsAuthenticated & IsSellerOrReadOnly
-                          | IsAuthenticated & IsCustomerAssigned
-                          | IsAuthenticated & IsManager]
+    permission_classes = [IsAuthenticated & HasContractPermission]
     serializer_class = ContractSerializer
 
     def get_queryset(self):
@@ -90,16 +89,16 @@ class CustomerContractViewset(ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
+       customer_in_url = Customer.objects.filter(
+           pk=self.kwargs['customer__pk']).first()
         # save the request.user as author when creating the contract
-        serializer.save(sales_staff=self.request.user)
-
+       serializer.save(sales_staff=self.request.user,customer=customer_in_url)
+         
 
 # Event
 class EventList(ReadOnlyModelViewSet):
 
-    permission_classes = [IsAuthenticated & IsSellerOrReadOnly
-                          | IsAuthenticated & IsCustomerAssigned
-                          | IsAuthenticated & IsManager]
+    permission_classes = [IsAuthenticated & HasEventPermission]
     serializer_class = EventSerializer
 
     def get_queryset(self):
@@ -110,12 +109,15 @@ class EventList(ReadOnlyModelViewSet):
         queryset = Event.objects.all()
         last_name = self.request.query_params.get('last_name')
         email = self.request.query_params.get('email')
-        start_date = self.request.query_params.get('date')
+        start_date = self.request.query_params.get('event_date_start')
 
         if last_name is not None:
-            queryset = queryset.filter(contract__customer__last_name=last_name)
+            queryset = queryset.filter(
+                # case insensitive (__icontains)
+                contract__customer__last_name__icontains=last_name)
         elif email is not None:
-            queryset = queryset.filter(contract__customer__email=email)
+            queryset = queryset.filter(
+                contract__customer__email__icontains=email)
         elif start_date is not None:
             queryset = queryset.filter(event_date_start__date=start_date)
         return queryset
@@ -124,10 +126,7 @@ class EventList(ReadOnlyModelViewSet):
 class EventContractViewset(ModelViewSet):
     """View for Event object. """
 
-    permission_classes = [IsAuthenticated & IsSellerOrReadOnly
-                          | IsAuthenticated & IsCustomerAssigned
-                          | IsAuthenticated & IsManager
-                          | IsAuthenticated & IsSupport]
+    permission_classes = [IsAuthenticated & HasEventPermission]
     serializer_class = EventSerializer
 
     def get_queryset(self):

@@ -1,24 +1,24 @@
 from rest_framework import permissions
-from crm.models import Contract, Event
+from crm.models import Customer, Contract, Event
 
 
 # permissions
-class IsSellerOrReadOnly(permissions.BasePermission):
-    """
-    Object-level permission to only allow owners(seller) of an object
-    to edit it. Assumes the model instance has an `seller` attribute.
-    """
-    def has_permission(self, request, view):
-        return True
+# class IsSellerOrReadOnly(permissions.BasePermission):
+#     """
+#     Object-level permission to only allow owners(seller) of an object
+#     to edit it. Assumes the model instance has an `seller` attribute.
+#     """
+#     def has_permission(self, request, view):
+#         return True
 
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if (request.user.is_authenticated and request.user.is_active
-                and request.method in permissions.SAFE_METHODS):
-            return True
-        # Instance must have an attribute named sales_staff`.
-        return obj.sales_staff == request.user
+#     def has_object_permission(self, request, view, obj):
+#         # Read permissions are allowed to any request,
+#         # so we'll always allow GET, HEAD or OPTIONS requests.
+#         if (request.user.is_authenticated and request.user.is_active
+#                 and request.method in permissions.SAFE_METHODS):
+#             return True
+#         # Instance must have an attribute named sales_staff`.
+#         return obj.sales_staff == request.user
 
 
 class IsCustomerAssigned(permissions.BasePermission):
@@ -49,8 +49,8 @@ class IsCustomerAssigned(permissions.BasePermission):
             print("rien de tout ça")
 
         if contract is not None:
-            if (request.user.is_authenticated and request.user.is_active
-                    and contract.sales_staff == request.user):
+            if (request.user.is_active
+                and contract.sales_staff == request.user):
                 return True
         else:
             return False
@@ -67,27 +67,106 @@ class IsManager(permissions.BasePermission):
     or method who return it.
     """
     def has_permission(self, request, view=None):
-        if (request.user.is_authenticated and request.user.is_active
-                and request.user.is_manager):
+        if (request.user.is_active and request.user.is_manager):
             return True
         return False
 
     def has_object_permission(self, request, view, obj):
+        if isinstance(obj, Customer):
+            return True
+        elif isinstance(obj, Contract):
+            return True
+        elif isinstance(obj, Event):
+            return True
         return self.has_permission(request, view)
 
 
-class IsSupport(permissions.BasePermission):
+# class IsSupport(permissions.BasePermission):
+#     """
+#     Object-level permission to only allow Managers
+#     to get access to CRUD actions.
+#     Assumes the model instance has an `is_support` attribute
+#     or method who return it.
+#     """
+#     def has_permission(self, request, view=None):
+#         if (request.user.is_active
+#             and request.user.is_support):
+#             return True
+#         return False
+
+#     def has_object_permission(self, request, view, obj):
+#         return self.has_permission(request, view)
+
+# Customer
+class HasCustomerPermission(permissions.BasePermission):
     """
-    Object-level permission to only allow Managers
-    to get access to CRUD actions.
-    Assumes the model instance has an `is_support` attribute
-    or method who return it.
+    Object-level permission to edit customers. Assumes the model instance
+    has an `seller` attribute.
     """
     def has_permission(self, request, view=None):
-        if (request.user.is_authenticated and request.user.is_active
-                and request.user.is_support):
+        if request.user.is_active:
             return True
         return False
 
     def has_object_permission(self, request, view, obj):
-        return self.has_permission(request, view)
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if (request.user.is_active
+                and request.method in permissions.SAFE_METHODS):
+            return True
+        # Instance must have an attribute named 'sales_staff' or 'is_manager'.
+        return obj.sales_staff == request.user or request.user.is_manager
+
+# Contract
+class HasContractPermission(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners(seller) of an object
+    to edit it. Assumes the model instance has an `seller` attribute.
+    """
+    def has_permission(self, request, view=None):
+        if request.user.is_active:
+            return True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if (request.user.is_active
+                and request.method in permissions.SAFE_METHODS):
+            return True
+        # Instance must have an attribute named 'sales_staff' or 'is_manager'.
+        return obj.sales_staff == request.user or request.user.is_manager
+
+# Event
+class HasEventPermission(permissions.BasePermission):
+    """
+    Object-level permission to only allow Managers and support
+    to get access to CRUD actions.
+    Assumes the model instance has an 'is_support' and 'is_manager' attribute
+    or method who return it.
+    """
+
+    def has_permission(self, request, view):
+        # Retrieve the contract_id from view
+        obj_id = request.resolver_match.kwargs.get('pk')
+        try:
+            event = Event.objects.get(pk=obj_id)
+            # contract = event.contract
+        except event.DoesNotExist:
+            raise ValueError
+
+        if event is not None:
+            if (request.user.is_active
+                and event.sales_staff() == request.user):
+                return True
+        else:
+            return False
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if (request.user.is_active
+                and request.method in permissions.SAFE_METHODS):
+            return True
+        # Instance must have an attribute named 'sales_staff' or 'is_manager'.
+        return obj.support_staff == request.user or request.user.is_manager

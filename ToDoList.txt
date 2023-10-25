@@ -79,3 +79,12 @@ ToDoList
 -Implement a payment solution / Monthly recurring payments
 -Flake8, Tests, Security
 -Deploy
+
+
+-icontains pour insensibilité à la casse(dans les query)
+-aller chercher le customer dans l'url pour créer le contrat dans 
+    CustomerContractViewset + update dans le serializer et la view
+-changer les permissions par rapport a l'objet et non le role 
+-tester les models, +views(créer un autre fichier de tests et ommit
+    les admin url settings)
+-tester la création de contracts etc...

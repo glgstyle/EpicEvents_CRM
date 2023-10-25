@@ -22,10 +22,11 @@ class ContractSerializer(ModelSerializer):
     customer_object = CustomerSerializer(
         source='customer', many=False, read_only=True)
 
+    # quand on modifie un contrat on ne doit pas pouvoir modifier le customer
     class Meta:
         model = Contract
         fields = '__all__'
-        read_only_fields = ['sales_staff']
+        read_only_fields = ['sales_staff', 'customer']
 
 
 class EventSerializer(ModelSerializer):
