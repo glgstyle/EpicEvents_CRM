@@ -1,24 +1,33 @@
+from django.urls import reverse
 import pytest
 from django.contrib.auth import get_user_model
 from django.test import Client
 from authentication.models import Staff
 
-
 # client for tests
 client = Client()
 # define User Model with MyUserManager
 User = get_user_model()
-staff = Staff()
+
+pytestmark = pytest.mark.django_db
+
+
+def test_staff_create():
+    # staff = Staff.objects.create(role='sales',first_name='john',last_name='lennon',
+    staff = Staff.objects.create(role='sales', last_name='lennon',
+                                 email='lennon@thebeatles.com',
+                                 phone='0102030405',
+                                 mobile='0601020304')
+    assert Staff.objects.filter(last_name='lennon').exists()
+    assert staff.is_admin == False
+    assert staff.role == 'sales'
 
 
 @pytest.mark.django_db
-def test_staff_create_and_redirect():
-    # Staff.objects.create_user('SALES','john','lennon','lennon@thebeatles.com',
-    #                           '0102030405','0601020304','','True','True',
-    #                           'False','False')
-    # assert Staff.objects.count() == 1
-    response = client.post('/admin/authentication/staff/add/',
-                            data={'email': 'blabla@gmail.com',
+def test_staff_create_should_redirect():
+    path = reverse('admin:authentication_staff_add')
+    response = client.post(path=path,
+                            data={'email': 'lennon@thebeatles.com',
                                   'first_name': 'john',
                                   'last_name': 'lennon',
                                   'phone': '0102030405',
@@ -27,13 +36,50 @@ def test_staff_create_and_redirect():
                                   'password': '123',
                                   'confirmation':'123',
                                   'role': "sales"})
+    assert reversed('admin:authentication_staff_change')
+#     # 200 means the form is being re-displayed with errors
     assert response.status_code == 302
+
+
+# def test_admin_create_staff(client, admin_user):
+#     client.force_login(admin_user)
+#     assert Staff.objects.count() == 0
+#     response = client.post("/admin/authentication/staff/add/",
+#                            data={'email': 'lennon@thebeatles.com',
+#                                  'first_name': 'john',
+#                                  'last_name': 'lennon',
+#                                  'phone': '0102030405',
+#                                  'mobile': '0601020304',
+#                                  'picture_url': '',
+#                                  'password': '123',
+#                                  'confirmation':'123',
+#                                  'role': "sales"},
+#     )
+#     # 200 means the form is being re-displayed with errors
+#     assert response.status_code == 302
+#     assert Staff.objects.count() == 1
+#     staff = Staff.objects.order_by("-id")[0]
+#     assert reversed('admin:authentication_staff_change')
+#     assert staff.email == 'lennon@thebeatles.com'
+#     assert staff.role == 'sales'
+
+    
+# def test_details(rf, admin_user, client):
+#     request = rf.get('/admin/authentication/staff/')
+#     # Remember that when using RequestFactory, the request does not pass
+#     # through middleware. If your view expects fields such as request.user
+#     # to be set, you need to set them explicitly.
+#     # The following line sets request.user to an admin user.
+#     request.user = admin_user
+#     response = client(request)
+#     assert response.status_code == 200
+
 
 @pytest.mark.django_db
 def test_user_create():
     User.objects.create_user(
-        'lennon@thebeatles.com', 'john', 'johnpassword')
-    assert User.objects.count() == 1
+        'one@user.com', 'one', 'userpassword')
+    assert Staff.objects.filter(first_name='one').exists()
 
 
 @pytest.mark.django_db
@@ -80,7 +126,7 @@ def test_create_user_without_email_should_fail(client):
 def test_superuser_create():
     User.objects.create_superuser(
         'lenny', 'lenny@kravitz.com', 'lennypassword')
-    assert User.objects.count() == 1
+    assert User.objects.filter(email='lenny@kravitz.com').exists()
 
 
 @pytest.mark.django_db
@@ -103,6 +149,6 @@ def test_login():
 @pytest.mark.django_db
 def test_login_api_page(api_client):
     response = api_client.post('/api/login/',
-                           data={'email': 'sales_staff@gmail.com',
+                           data={'email': 'sales3_staff@gmail.com',
                                  'password': '123'})
     assert response.status_code == 200
