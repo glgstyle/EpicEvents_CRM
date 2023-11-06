@@ -1,0 +1,90 @@
+ToDoList
+
+*Feature 1 : Application use Django and PostgreSQL
+    -Create virtual environment
+    -Install django, create project and App
+    -Use PostgreSQL database
+
+*Feature 2 : Authentication page exists for users
+    -Configure Django Admin
+    -Authentication page 
+    -Permitted users can connect to Django admin
+
+*Feature 3 : Django models for every business domain (sans permission)
+    -Customer
+    -Contract status
+    -Contract
+    -Event
+
+*Feature 4 : Non admin users can be associated with one of two groups 
+             determining permissions for the API
+    -Management team users will be Django admin "staff" users:      
+        -create staff user and give permissions
+        -CRUD on users
+        -Read and update all CRM datas(contracts, events...)
+    *satisfaction condition :
+        -Permission configuration must be organised in 2 groups that have the 
+         following access privileges and to which users can be associated:
+            *Sales team group :
+                -Create prospects/customers
+                -Convert prospects to clients
+                -Display and Update customers (assigned to them)
+                -Create a contract for a potential new event
+                -Indicate that an open contract is signed
+                -Create events for a Contract
+            *Support team group :
+                -Display and update events (assigned to them)
+                -Display customers (for customers of events assigned to them)
+
+*Feature 5 : There is an API supporting CRUD operations based on db models
+    -Install Django Rest framework and use it for views 
+    -Use Django ORM to interact with database models
+    *Create API endpoints for the following model:
+        -Customers
+        -Contracts
+        -Events
+    *Secure the API (see doc) :
+        -Always check user permissions are sufficient to access the requested 
+         view or data
+        -Check that the HTTP method used in the request is 
+         appropriate/authorized.
+
+*Feature 6 : API endpoints should allow users to search and filter informations 
+    -When they have permission to access to the datas, users can search and 
+     filter informations with the Api endpoints
+    -Use Django ORM to interact to the database models
+    *Customer API endpoints allow users to search:
+        -Customer name
+        -Customer email
+    *Contract API endpoints allow users to search:
+        -Customer name
+        -Customer email
+        -Contract date
+        -Contract amount
+        -Contract status
+        -Contract payment due
+    *Events API endpoints allow users to search:
+        -Customer name
+        -Customer email
+        -Event date
+
+
+-Base pages / templates
+-Simple dashboard
+-Create new prospects/customers
+-Change and delete prospects
+-Convert prospects to clients
+-Change and delete clients
+-Implement solution for teams
+-Implement a payment solution / Monthly recurring payments
+-Flake8, Tests, Security
+-Deploy
+
+
+-icontains pour insensibilité à la casse(dans les query)
+-aller chercher le customer dans l'url pour créer le contrat dans 
+    CustomerContractViewset + update dans le serializer et la view
+-changer les permissions par rapport a l'objet et non le role 
+-tester les models, +views(créer un autre fichier de tests et ommit
+    les admin url settings)
+-tester la création de contracts etc...
