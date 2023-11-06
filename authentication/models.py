@@ -4,32 +4,30 @@ from django.db import models
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, first_name, password=None):
+    def create_user(self, email, password=None):
         """
         Creates and saves a User with the given email, firstname and password.
         """
-        if not email:
+        if email == "":
             raise ValueError("Users must have an email address")
-        elif not first_name:
-            raise ValueError("Users must have a firstname")
+        # elif first_name == "":
+        #     raise ValueError("Users must have a firstname")
 
         user = self.model(
-            email=self.normalize_email(email),
-            first_name=first_name,
+            email=self.normalize_email(email)
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, first_name, password=None):
+    def create_superuser(self, email, password=None):
 
         """
         Creates and saves a superuser with the given email,
         firstname and password.
         """
         user = self.create_user(
-            self.normalize_email(email),
-            first_name=first_name,
+            self.normalize_email(email)
         )
         user.set_password(password)
         user.is_admin = True
@@ -47,7 +45,7 @@ class Staff(AbstractBaseUser, PermissionsMixin):
 
     role = models.CharField(max_length=25, choices=Roles.choices,
                             # Default staff is manager
-                            default=Roles.MANAGEMENT)
+                            default=Roles.SUPPORT)
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     email = models.EmailField(

@@ -9,7 +9,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Staff
-        fields = ['email', 'password', 'confirmation']
+        fields = ['email', 'password', 'confirmation', 'role']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -31,4 +31,4 @@ class StaffSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Staff
-        fields = ['id', 'email']
+        fields = ['id', 'email', 'role']

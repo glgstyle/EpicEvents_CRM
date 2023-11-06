@@ -43,16 +43,19 @@ User = get_user_model()
 @pytest.fixture
 def api_client():
     user = User.objects.create_user(
-        first_name='john', email='sales_staff@gmail.com', password='123')
+        first_name='john', email='sales7_staff@gmail.com', password='123')
     client = APIClient()
     refresh = RefreshToken.for_user(user)
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-
     return client
 
 
-# Django Admin
 @pytest.fixture()
-def admin_client(client, admin_user):
-    client.force_login(admin_user)
+def admin_client(client, django_user_model):
+    email = "user1@gmail.com"
+    password = "bar"
+    admin = django_user_model.objects.create_user(email=email, password=password)
+    admin.role = "MANAGEMENT"
+    admin.save()
+    client.force_login(admin)
     return client

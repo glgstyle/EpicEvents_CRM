@@ -1,6 +1,12 @@
 from rest_framework import permissions
 from crm.models import Customer, Contract, Event
 
+from django.contrib.auth.backends import BaseBackend
+from django.conf import settings
+
+class MagicAdminBackend(BaseBackend):
+    def has_perm(self, user_obj, perm, obj=None):
+        return user_obj.username == settings.ADMIN_LOGIN
 
 # permissions
 # class IsSellerOrReadOnly(permissions.BasePermission):
@@ -124,7 +130,18 @@ class HasContractPermission(permissions.BasePermission):
     to edit it. Assumes the model instance has an `seller` attribute.
     """
     def has_permission(self, request, view=None):
-        if request.user.is_active:
+        obj_id = request.resolver_match.kwargs.get('contract__pk')
+        contract = Contract.objects.filter(pk=obj_id).first()
+        # print("obj_id", obj_id)
+        # if we want to Read the contracts
+        if (request.method in permissions.SAFE_METHODS
+            and request.user.is_active):
+            return True
+        # if we want to POST (to create a contract)
+        elif request.user.is_active and request.user.is_manager:
+            return True
+        elif ((request.user.is_seller) and (contract is not None)
+              and (contract.sales_staff == request.user)):
             return True
         return False
 
@@ -147,20 +164,25 @@ class HasEventPermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
+        # if we want to Read the event
         # Retrieve the contract_id from view
-        obj_id = request.resolver_match.kwargs.get('pk')
-        try:
-            event = Event.objects.get(pk=obj_id)
-            # contract = event.contract
-        except event.DoesNotExist:
-            raise ValueError
-
-        if event is not None:
-            if (request.user.is_active
-                and event.sales_staff() == request.user):
-                return True
-        else:
-            return False
+        obj_id = request.resolver_match.kwargs.get('customer__pk')
+        contract = Contract.objects.filter(pk=obj_id).first()
+        print("obj_id", obj_id)
+        # if we want to Read the event
+        if (request.method in permissions.SAFE_METHODS
+            and request.user.is_active):
+            print("cas 0********")
+            return True
+        # if we want to POST (to create an event)
+        elif request.user.is_active and request.user.is_manager:
+            print("cas 1********", request.user.is_active, request.user.is_manager, request.user.role)
+            return True
+        elif ((request.user.is_seller) and (contract is not None)
+              and (contract.sales_staff == request.user)):
+            print("cas2*********")
+            return True
+        return False
 
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
