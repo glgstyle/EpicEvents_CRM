@@ -130,7 +130,7 @@ class HasContractPermission(permissions.BasePermission):
     to edit it. Assumes the model instance has an `seller` attribute.
     """
     def has_permission(self, request, view=None):
-        obj_id = request.resolver_match.kwargs.get('contract__pk')
+        obj_id = request.resolver_match.kwargs.get('customer__pk')
         contract = Contract.objects.filter(pk=obj_id).first()
         # print("obj_id", obj_id)
         # if we want to Read the contracts
@@ -141,7 +141,7 @@ class HasContractPermission(permissions.BasePermission):
         elif request.user.is_active and request.user.is_manager:
             return True
         elif ((request.user.is_seller) and (contract is not None)
-              and (contract.sales_staff == request.user)):
+              and (contract.customer.sales_staff == request.user)):
             return True
         return False
 

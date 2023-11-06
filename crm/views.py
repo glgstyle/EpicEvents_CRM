@@ -78,7 +78,7 @@ class ContractList(ReadOnlyModelViewSet):
 class CustomerContractViewset(ModelViewSet):
     """View for Customer Contract. """
 
-    permission_classes = [IsAuthenticated & HasContractPermission]
+    permission_classes = [(IsAuthenticated & HasContractPermission)]
     serializer_class = ContractSerializer
 
     def get_queryset(self):
