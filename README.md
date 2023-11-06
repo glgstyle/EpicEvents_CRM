@@ -112,7 +112,7 @@ Afin de respecter les conventions de code nommée PEP8 nous avons utilisé Flake
 
 # Contribuer au project
 
-    Soft Desk n'est pas un projet open source. Veuillez nous contacter pour contribuer avec vos propres fonctionnalités.
+    Epic events n'est pas un projet open source. Veuillez nous contacter pour contribuer avec vos propres fonctionnalités.
 
 # Auteur
 
